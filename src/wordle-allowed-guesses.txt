@@ -2498,6 +2498,7 @@ drave
 draws
 drays
 dream
+dread
 drear
 dreck
 dreed
@@ -3995,6 +3996,7 @@ hejra
 heled
 heles
 helio
+hello
 hells
 helms
 helos

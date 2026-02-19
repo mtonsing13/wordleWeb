@@ -110,3 +110,18 @@ button:focus-visible {
   border: 4px solid #ccc;
   border-radius: 1px;
 }
+
+.correct {
+  background-color: green;
+  color: white;
+}
+
+.present {
+  background-color: goldenrod;
+  color: white;
+}
+
+.incorrect {
+  background-color: grey;
+  color: white;
+}

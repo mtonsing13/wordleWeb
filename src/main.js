@@ -1,10 +1,7 @@
 import './style.css'
 import { words } from './wordlist.js';
 import { pickWord } from './wordlefunctions.js';
-import validWordsText from './wordle-allowed-guesses.txt?raw';
-//import javascriptLogo from './javascript.svg'
-//import viteLogo from '/vite.svg'
-//import { setupCounter } from './counter.js'
+import validWordsText from './wordle-answers-alphabetical.txt?raw';
 
 document.querySelector('#app').innerHTML = `
   <h1>Wordle Practice</h1>
@@ -51,12 +48,14 @@ document.querySelector('#app').innerHTML = `
     <input class="letter-input" maxlength="1" />
   </div>
 `
-
 //will choose word
 const chosenWord = pickWord(words);
 console.log(chosenWord);
 
-//changes wordle-allowed-guesses into list 
+
+
+
+//changes validWordsText into a guess
 const VALID_GUESSES = validWordsText
   .split('\n')
   .map(word => word.trim().toLowerCase())
@@ -82,6 +81,34 @@ function setRowEnabled(rowIndex, enabled) {
 //current active row is row 0
 let activeRow = 0
 
+//set up row so the user can type in answer so they can type more smoothly
+
+function setupRow() {
+  const currentRow = rows[activeRow];
+  const inputs = currentRow.querySelectorAll('input');
+
+  inputs.forEach((inp, i) => {
+  inp.addEventListener('input', () => {
+    // keep only 1 char, uppercase if you want
+    inp.value = inp.value.slice(-1).toUpperCase();
+
+    // if a character was entered, go to next box
+    if (inp.value && i < inputs.length - 1) {
+      inputs[i + 1].focus();
+    }
+  });
+
+  inp.addEventListener('keydown', (e) => {
+    // backspace: if empty, go back
+    if (e.key === 'Backspace' && !inp.value && i > 0) {
+      inputs[i - 1].focus();
+    }
+  });
+});
+}
+setupRow()
+
+
 //Every time user presses enter 
   //get word from activeRow
     //check if word equals chosenWord
@@ -97,37 +124,50 @@ let activeRow = 0
 
       let word = '';
       inputs.forEach(input => {
-        word += input.value;
+        word += input.value.toLowerCase();
       });
       if (word.length!=5){
-        console.log("To short")
+        console.log("TO SHORT")
         return
       }
       if (!VALID_GUESSES.includes(word)) {
+        console.log(word);
         console.log("word does not exist");
         return;
       }
       console.log(word)
+      //here we will change the input boxes
+      for (let i=0; i<5;i++){
+        const box = inputs[i];
+        if(chosenWord[i] == word[i]){
+          //turn that box green
+          box.classList.add("correct");
+        }
+        else if(chosenWord.includes(word[i])){
+          //turn that box yellow
+          box.classList.add("present");
+        }
+        else{
+          box.classList.add("incorrect");
+        }
+      }
+      //was a correct guess
       if (word===chosenWord){
+        setRowEnabled(activeRow, false)
         console.log("You won")
       }
+      //wasn't correct so go to next guess
       else{
         setRowEnabled(activeRow, false)
         activeRow +=1
         if (activeRow>=rows.length){
           console.log("Game Over")
         }
-        setRowEnabled(activeRow, true)
 
+        setRowEnabled(activeRow, true)
+        setupRow()
+        rows[activeRow].querySelector('input').focus(); 
       }
-        // Prevent the default form submission behavior (if the input is in a form)
-        //event.preventDefault();
-        
-        // Print to the console
-        console.log("Enter key was pressed!");
-        
-        // Optionally, log the value of the input field
-        console.log("Input value:", event.target.value);
     }
 });
 
