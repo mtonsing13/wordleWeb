@@ -1,10 +1,14 @@
 import './style.css'
 import { words } from './wordlist.js';
 import { pickWord } from './wordlefunctions.js';
-import validWordsText from './wordle-answers-alphabetical.txt?raw';
+//import validWordsText from './wordle-answers-alphabetical.txt?raw';
+import validWordsText from './WORDS.txt?raw';
+import AnswerText from './wordle-answers-alphabetical.txt?raw';
+import confetti from "canvas-confetti";
 
 document.querySelector('#app').innerHTML = `
   <h1>Wordle Practice</h1>
+  <div id="message" class="message"></div>
   <div class="letter-box-row" id="firstguess">
     <input class="letter-input" maxlength="1" />
     <input class="letter-input" maxlength="1" />
@@ -48,12 +52,35 @@ document.querySelector('#app').innerHTML = `
     <input class="letter-input" maxlength="1" />
   </div>
 `
+
+//change AnswerText into array of words to choose for answer
+const ANSWERS = AnswerText
+  .split('\n')
+  .map(word => word.trim().toLowerCase())
+  .filter(word => word.length === 5);
 //will choose word
-const chosenWord = pickWord(words);
+const chosenWord = pickWord(ANSWERS);
 console.log(chosenWord);
 
+//messageview
+function showMessage(text) {
+  const message = document.getElementById("message");
+  message.textContent = text;
+  message.classList.add("show");
 
+  setTimeout(() => {
+    message.classList.remove("show");
+  }, 2000); // 2 seconds
+}
 
+//confetti launch
+function launchConfetti() {
+  confetti({
+    particleCount: 150,
+    spread: 90,
+    origin: { y: 0.6 }
+  });
+}
 
 //changes validWordsText into a guess
 const VALID_GUESSES = validWordsText
@@ -127,11 +154,13 @@ setupRow()
         word += input.value.toLowerCase();
       });
       if (word.length!=5){
+        showMessage("TO SHORT");
         console.log("TO SHORT")
         return
       }
       if (!VALID_GUESSES.includes(word)) {
         console.log(word);
+        showMessage("WORD DOES NOT EXIST");
         console.log("word does not exist");
         return;
       }
@@ -154,6 +183,8 @@ setupRow()
       //was a correct guess
       if (word===chosenWord){
         setRowEnabled(activeRow, false)
+        showMessage("YOU WON");
+        launchConfetti()
         console.log("You won")
       }
       //wasn't correct so go to next guess
