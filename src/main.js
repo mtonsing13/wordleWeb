@@ -1,5 +1,5 @@
 import './style.css'
-import { words } from './wordlist.js';
+//import { words } from './wordlist.js';
 import { pickWord } from './wordlefunctions.js';
 //import validWordsText from './wordle-answers-alphabetical.txt?raw';
 import validWordsText from './WORDS.txt?raw';
@@ -82,7 +82,7 @@ function launchConfetti() {
   });
 }
 
-//changes validWordsText into a guess
+//changes validWordsText into all the possible guesses
 const VALID_GUESSES = validWordsText
   .split('\n')
   .map(word => word.trim().toLowerCase())
@@ -108,15 +108,13 @@ function setRowEnabled(rowIndex, enabled) {
 //current active row is row 0
 let activeRow = 0
 
-//set up row so the user can type in answer so they can type more smoothly
-
+//set up row so the user can type in answer so they can type smoothly
 function setupRow() {
   const currentRow = rows[activeRow];
   const inputs = currentRow.querySelectorAll('input');
 
   inputs.forEach((inp, i) => {
   inp.addEventListener('input', () => {
-    // keep only 1 char, uppercase if you want
     inp.value = inp.value.slice(-1).toUpperCase();
 
     // if a character was entered, go to next box
@@ -192,7 +190,9 @@ setupRow()
         setRowEnabled(activeRow, false)
         activeRow +=1
         if (activeRow>=rows.length){
-          console.log("Game Over")
+          showMessage("Game Over word is " + chosenWord );
+          //showMessage(chosenWord);
+          //console.log("Game Over")
         }
 
         setRowEnabled(activeRow, true)
