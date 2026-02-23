@@ -62,6 +62,7 @@ const ANSWERS = AnswerText
   .filter(word => word.length === 5);
 //will choose word
 const chosenWord = pickWord(ANSWERS);
+//const chosenWord = "cigar"
 console.log(chosenWord);
 
 //will now set of alpha 
@@ -179,6 +180,75 @@ setupRow()
       console.log(word)
       //here we will change the input boxes
       const alphabetLetters = document.querySelectorAll("#alphabet div");
+      //changing algorithm so coloring box is more accurately represented.
+      
+      //Array to keep track of index box color first have all be absent
+      const result = Array(5).fill("absent"); 
+      //first past to check which are correct spot
+      for (let i = 0; i < 5; i++) {
+        if (chosenWord[i] === word[i]) {
+          result[i] = "correct";
+        }
+      }
+      const counts = {}; // letter -> remaining count
+      //to get actual counts of chosen word that is available after green were chosen
+      for (let i = 0; i < 5; i++) {
+        if (result[i] === "correct") continue; // skip greens
+          const ch = chosenWord[i];
+          counts[ch] = (counts[ch] || 0) + 1;
+        }
+      //now updates other boxes to see what color they should be  
+      for (let i = 0; i < 5; i++) {
+        if (result[i] === "correct"){
+          continue; // keep green 
+        }
+          const ch = word[i];
+        if (counts[ch] > 0) {
+          result[i] = "present";
+          counts[ch] -= 1;
+        } 
+        else {
+          result[i] = "absent";
+        }
+      }
+      //now actually changes boxes color 
+      for (let i = 0; i < 5; i++) {
+        const letter = word[i].toUpperCase();
+        const status = result[i]
+
+        const box = inputs[i];
+        box.classList.remove("correct", "present", "incorrect");
+        if (result[i] === "correct"){
+          box.classList.add("correct");
+        } 
+        else if (result[i] === "present"){
+          box.classList.add("present");
+        } 
+        else {
+          box.classList.add("incorrect");
+        }
+        //update alphabet key 
+        if (status === "correct" || status === "present"){
+          alphabetLetters.forEach(div => {
+            if (div.innerText === letter) {
+              div.classList.remove("incorrect");
+              div.classList.add("present");
+            }
+          });
+        }
+        else {
+          alphabetLetters.forEach(div => {
+            if (div.innerText === letter) {
+              if (!div.classList.contains("present")) {
+                div.classList.add("incorrect");
+              }
+            }
+          });
+        }
+
+      }
+      //for 
+      /*
       for (let i=0; i<5;i++){
         const box = inputs[i];
         const letter = word[i].toUpperCase();
@@ -212,6 +282,7 @@ setupRow()
           });
         }
       }
+        */
       //was a correct guess
       if (word===chosenWord){
         setRowEnabled(activeRow, false)
