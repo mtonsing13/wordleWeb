@@ -5,10 +5,12 @@ import { pickWord } from './wordlefunctions.js';
 import validWordsText from './WORDS.txt?raw';
 import AnswerText from './wordle-answers-alphabetical.txt?raw';
 import confetti from "canvas-confetti";
+import ScrabbleText from "./SCRABBLEWORDS.txt?raw";
 
 document.querySelector('#app').innerHTML = `
   <h1>Wordle Practice</h1>
   <div id="message" class="message"></div>
+  <div id="alphabet" class="alphabet"></div>
   <div class="letter-box-row" id="firstguess">
     <input class="letter-input" maxlength="1" />
     <input class="letter-input" maxlength="1" />
@@ -62,6 +64,16 @@ const ANSWERS = AnswerText
 const chosenWord = pickWord(ANSWERS);
 console.log(chosenWord);
 
+//will now set of alpha 
+const alphabet = document.getElementById("alphabet");
+export const alpha = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i))
+alpha.forEach(item => {
+    const newDiv = document.createElement("div"); // Create a new div for each item
+    newDiv.innerText = item; // Set the text content
+
+    alphabet.appendChild(newDiv); // Append the new div to the container
+  });
+
 //messageview
 function showMessage(text) {
   const message = document.getElementById("message");
@@ -83,10 +95,12 @@ function launchConfetti() {
 }
 
 //changes validWordsText into all the possible guesses
-const VALID_GUESSES = validWordsText
+const VALID_GUESSES = ScrabbleText
   .split('\n')
   .map(word => word.trim().toLowerCase())
   .filter(word => word.length === 5);
+
+const VALID_SET = new Set(VALID_GUESSES);
 
 
 //disable all rows but first row
@@ -156,7 +170,7 @@ setupRow()
         console.log("TO SHORT")
         return
       }
-      if (!VALID_GUESSES.includes(word)) {
+      if (!VALID_SET.has(word)){ 
         console.log(word);
         showMessage("WORD DOES NOT EXIST");
         console.log("word does not exist");
@@ -164,18 +178,38 @@ setupRow()
       }
       console.log(word)
       //here we will change the input boxes
+      const alphabetLetters = document.querySelectorAll("#alphabet div");
       for (let i=0; i<5;i++){
         const box = inputs[i];
+        const letter = word[i].toUpperCase();
         if(chosenWord[i] == word[i]){
           //turn that box green
           box.classList.add("correct");
+          //find i in alpha and turn inword
+          alphabetLetters.forEach(div => {
+            if (div.innerText === letter) {
+              div.classList.add("present");
+            }
+          });
         }
         else if(chosenWord.includes(word[i])){
           //turn that box yellow
+          //go to alpha turn that letter yellow
           box.classList.add("present");
+          alphabetLetters.forEach(div => {
+            if (div.innerText === letter) {
+              div.classList.add("present");
+            }
+          });
         }
         else{
+          //go to alpha that letter red 
           box.classList.add("incorrect");
+          alphabetLetters.forEach(div => {
+            if (div.innerText === letter) {
+              div.classList.add("incorrect");
+            }
+          });
         }
       }
       //was a correct guess

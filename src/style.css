@@ -98,7 +98,7 @@ button:focus-visible {
 .letter-box-row {
   display: flex;
   /*gap: 50px; /* Space between boxes */
-
+  justify-content: center;  
 }
 
 .letter-input {
@@ -142,4 +142,36 @@ button:focus-visible {
 
 .message.show {
   opacity: 1;
+}
+.alphabet {
+  display: flex;
+  justify-content: center;   /* center horizontally */
+  gap: 8px;                  /* space between letters */
+  margin-bottom: 20px;
+}
+.alphabet div {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.notguessed {
+  /*turn letter to grey*/
+}
+
+.notinword {
+  /*turn letter to grey*/
+  background-color: grey;
+  color: white;
+}
+
+.inword {
+  /*turn letter to green*/
+  background-color: goldenrod;
+  color: white;
 }
